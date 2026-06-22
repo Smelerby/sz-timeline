@@ -143,11 +143,19 @@
     .event-finance {
       display: inline-block;
       padding: 6px 12px;
-      background: rgba(16, 185, 129, 0.2);
-      color: #10b981;
       border-radius: 8px;
       font-size: 14px;
       font-weight: 600;
+    }
+
+    .event-finance.income {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+    }
+
+    .event-finance.expense {
+      background: rgba(248, 113, 113, 0.2);
+      color: #f87171;
     }
 
     /* Медиа в карточке */
@@ -190,6 +198,8 @@
       box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
       transition: all 0.3s ease;
       z-index: 99;
+      border: none;
+      color: #0f172a;
     }
 
     .fab:hover {
@@ -327,6 +337,78 @@
       background: rgba(167, 243, 208, 0.2);
     }
 
+    /* Переключатель типа операции */
+    .toggle-container {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid rgba(167, 243, 208, 0.3);
+      background: rgba(15, 23, 42, 0.6);
+      color: #94a3b8;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-btn.active[data-type="income"] {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #10b981;
+      color: #10b981;
+    }
+
+    .toggle-btn.active[data-type="expense"] {
+      background: rgba(248, 113, 113, 0.2);
+      border-color: #f87171;
+      color: #f87171;
+    }
+
+    .toggle-btn.active[data-type="skip"] {
+      background: rgba(148, 163, 184, 0.2);
+      border-color: #94a3b8;
+      color: #94a3b8;
+    }
+
+    .toggle-btn:hover:not(.active) {
+      border-color: rgba(167, 243, 208, 0.5);
+      color: #e2e8f0;
+    }
+
+    /* Поле прибыли с динамическим цветом */
+    #financeInput {
+      transition: all 0.3s ease;
+    }
+
+    #financeInput.income {
+      border-color: #10b981;
+      color: #10b981;
+    }
+
+    #financeInput.income::placeholder {
+      color: rgba(16, 185, 129, 0.5);
+    }
+
+    #financeInput.expense {
+      border-color: #f87171;
+      color: #f87171;
+    }
+
+    #financeInput.expense::placeholder {
+      color: rgba(248, 113, 113, 0.5);
+    }
+
+    #financeInput.skip {
+      border-color: #94a3b8;
+      color: #94a3b8;
+      opacity: 0.5;
+    }
+
     /* Превью медиа в форме */
     .media-preview {
       display: flex;
@@ -364,7 +446,7 @@
 <body>
   <!-- Шапка -->
   <div class="header">
-    <h1>🌿 Субботник жизни</h1>
+    <h1> Субботник жизни</h1>
   </div>
 
   <!-- Карточка статуса -->
@@ -385,7 +467,7 @@
   </div>
 
   <!-- FAB кнопка -->
-  <div class="fab" onclick="openModal()">+</div>
+  <button class="fab" onclick="openModal()">+</button>
 
   <!-- Модальное окно -->
   <div class="modal" id="modal">
@@ -411,9 +493,26 @@
           <textarea id="descInput" placeholder="Что произошло?"></textarea>
         </div>
 
+        <!-- Переключатель типа операции -->
         <div class="form-group">
-          <label>Прибыль (₽)</label>
-          <input type="number" id="financeInput" placeholder="18800">
+          <label>Тип операции</label>
+          <div class="toggle-container">
+            <button type="button" class="toggle-btn active" data-type="income" onclick="setFinanceType('income')">
+              + Доход
+            </button>
+            <button type="button" class="toggle-btn" data-type="expense" onclick="setFinanceType('expense')">
+              − Расход
+            </button>
+            <button type="button" class="toggle-btn" data-type="skip" onclick="setFinanceType('skip')">
+              Пропустить
+            </button>
+          </div>
+          <input type="hidden" id="financeType" value="income">
+        </div>
+
+        <div class="form-group">
+          <label>Сумма (₽)</label>
+          <input type="number" id="financeInput" placeholder="18800" class="income">
         </div>
 
         <div class="form-group">
@@ -473,10 +572,14 @@
       let missed = 0;
 
       events.forEach(event => {
-        const value = parseFloat(event.finance) || 0;
+        if (!event.finance) return;
+        
+        // Убираем знак + если есть, парсим число
+        const value = parseFloat(String(event.finance).replace('+', ''));
+        
         if (value > 0) {
           profit += value;
-        } else {
+        } else if (value < 0) {
           missed += Math.abs(value);
         }
       });
@@ -497,6 +600,7 @@
             <div class="empty-state-text">Пока нет событий</div>
           </div>
         `;
+        updateStatus();
         return;
       }
 
@@ -504,18 +608,26 @@
       events.sort((a, b) => b.sortDate - a.sortDate);
 
       timeline.innerHTML = events.map(event => {
+        // Медиа
         const mediaHtml = event.media && event.media.length > 0 
           ? `<div class="event-media">
                ${event.media.map(src => `<img src="${src}" alt="event photo" onclick="viewImage('${src}')"`).join('')}
              </div>`
           : '';
 
+        // Финансы с цветовой индикацией
+        let financeHtml = '';
+        if (event.finance) {
+          const financeClass = event.finance.startsWith('-') ? 'expense' : 'income';
+          financeHtml = `<div class="event-finance ${financeClass}">${event.finance} ₽</div>`;
+        }
+
         return `
           <div class="event-card">
             <div class="event-date">${event.date}</div>
             <div class="event-title">${event.title}</div>
             <div class="event-desc">${event.desc || ''}</div>
-            ${event.finance ? `<div class="event-finance">${event.finance} ₽</div>` : ''}
+            ${financeHtml}
             ${mediaHtml}
           </div>
         `;
@@ -528,6 +640,8 @@
     function openModal() {
       document.getElementById('modal').classList.add('active');
       document.getElementById('dateInput').value = new Date().toISOString().slice(0, 16);
+      // Сброс переключателя на "Доход"
+      setFinanceType('income');
     }
 
     // Закрыть модальное окно
@@ -536,6 +650,47 @@
       document.getElementById('eventForm').reset();
       document.getElementById('mediaPreview').innerHTML = '';
       window.tempMedia = [];
+      setFinanceType('income');
+    }
+
+    // Переключение типа операции (Доход/Расход/Пропустить)
+    function setFinanceType(type) {
+      // Сохраняем выбранный тип
+      document.getElementById('financeType').value = type;
+      
+      // Убираем active у всех кнопок
+      document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Добавляем active нажатой кнопке
+      document.querySelector(`[data-type="${type}"]`).classList.add('active');
+      
+      // Получаем поле ввода
+      const financeInput = document.getElementById('financeInput');
+      
+      // Меняем стили и placeholder в зависимости от типа
+      financeInput.classList.remove('income', 'expense', 'skip');
+      
+      if (type === 'income') {
+        financeInput.classList.add('income');
+        financeInput.placeholder = '18800';
+        financeInput.disabled = false;
+      } else if (type === 'expense') {
+        financeInput.classList.add('expense');
+        financeInput.placeholder = '3000';
+        financeInput.disabled = false;
+      } else if (type === 'skip') {
+        financeInput.classList.add('skip');
+        financeInput.placeholder = 'Не указано';
+        financeInput.disabled = true;
+        financeInput.value = '';
+      }
+      
+      // Фокус на поле если не skip
+      if (type !== 'skip') {
+        setTimeout(() => financeInput.focus(), 100);
+      }
     }
 
     // Конвертация файла в base64
@@ -573,11 +728,23 @@
       e.preventDefault();
 
       const dateValue = document.getElementById('dateInput').value;
+      const financeType = document.getElementById('financeType').value;
+      let financeValue = document.getElementById('financeInput').value;
+
+      // Добавляем знак + или - в зависимости от типа
+      if (financeType === 'expense' && financeValue) {
+        financeValue = '-' + Math.abs(parseFloat(financeValue));
+      } else if (financeType === 'income' && financeValue) {
+        financeValue = '+' + Math.abs(parseFloat(financeValue));
+      } else if (financeType === 'skip') {
+        financeValue = '';
+      }
+
       const event = {
         date: formatDate(dateValue),
         title: document.getElementById('titleInput').value,
         desc: document.getElementById('descInput').value,
-        finance: document.getElementById('financeInput').value,
+        finance: financeValue,
         sortDate: new Date(dateValue).getTime(),
         media: window.tempMedia || []
       };
@@ -594,8 +761,7 @@
     function viewImage(src) {
       const img = new Image();
       img.src = src;
-      img.style.maxWidth = '100%';
-      img.style.maxHeight = '100%';
+      img.style.cssText = 'max-width: 100%; max-height: 100%; border-radius: 12px;';
       
       const overlay = document.createElement('div');
       overlay.style.cssText = `
@@ -610,6 +776,7 @@
         justify-content: center;
         z-index: 300;
         cursor: pointer;
+        padding: 20px;
       `;
       
       overlay.appendChild(img);
