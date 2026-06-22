@@ -1,292 +1,631 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0f172a">
-    <title>СЖ Хронология</title>
-    <style>
-        /* === БАЗОВЫЕ НАСТРОЙКИ (MOBILE FIRST) === */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(180deg, #0f172a 0%, #1e1e2e 100%);
-            color: #e2e8f0;
-            min-height: 100vh;
-            padding-bottom: 90px;
-            overflow-x: hidden;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0f172a">
+  <title>Субботник жизни — Хронология</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        /* === ШАПКА === */
-        .app-header {
-            position: sticky; top: 0;
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 16px 20px;
-            border-bottom: 1px solid rgba(167, 243, 208, 0.1);
-            z-index: 100;
-        }
-        .header-title { font-size: 18px; font-weight: 600; color: #a7f3d0; }
-        .header-subtitle { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1e2e 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
 
-        /* === КАРТОЧКА СТАТУСА === */
-        .status-card {
-            margin: 20px; padding: 16px;
-            background: rgba(30, 30, 46, 0.8);
-            border: 1px solid rgba(167, 243, 208, 0.15);
-            border-radius: 16px;
-        }
-        .status-title { font-size: 14px; color: #c4b5fd; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .status-item { background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 12px; }
-        .status-label { font-size: 11px; color: #64748b; margin-bottom: 6px; }
-        .status-value { font-size: 16px; font-weight: 700; color: #e2e8f0; }
-        .status-value.profit { color: #a7f3d0; }
-        .status-value.missed { color: #fdba74; }
+    /* Шапка */
+    .header {
+      position: sticky;
+      top: 0;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      z-index: 100;
+      border-bottom: 1px solid rgba(167, 243, 208, 0.2);
+    }
 
-        /* === ЛЕНТА ВРЕМЕНИ === */
-        .timeline { padding: 0 20px; position: relative; }
-        .timeline::before {
-            content: ''; position: absolute; left: 32px; top: 10px; bottom: 10px;
-            width: 2px; background: linear-gradient(180deg, #a7f3d0 0%, #c4b5fd 100%); opacity: 0.2;
-        }
-        .event-card {
-            position: relative; margin-bottom: 16px; padding: 16px; padding-left: 40px;
-            background: rgba(30, 30, 46, 0.6); border-radius: 14px;
-            border: 1px solid rgba(167, 243, 208, 0.05); transition: all 0.2s ease;
-        }
-        .event-card:active { transform: scale(0.98); background: rgba(30, 30, 46, 0.9); }
-        .event-dot {
-            position: absolute; left: 26px; top: 22px; width: 14px; height: 14px;
-            border-radius: 50%; background: #0f172a; border: 3px solid #a7f3d0; z-index: 2;
-        }
-        .event-date { font-size: 12px; color: #94a3b8; font-weight: 500; margin-bottom: 6px; }
-        .event-title { font-size: 16px; font-weight: 600; color: #e2e8f0; margin-bottom: 6px; line-height: 1.3; }
-        .event-preview { font-size: 14px; color: #64748b; line-height: 1.5; }
-        .event-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-        .tag { padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 500; }
-        .tag.income { background: rgba(167, 243, 208, 0.1); color: #a7f3d0; }
-        .tag.expense { background: rgba(248, 113, 113, 0.1); color: #f87171; }
-        .tag.media { background: rgba(196, 181, 253, 0.1); color: #c4b5fd; }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #a7f3d0 0%, #c4b5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-        /* === ПЛАВАЮЩАЯ КНОПКА (FAB) === */
-        .fab {
-            position: fixed; bottom: 24px; right: 24px; width: 64px; height: 64px;
-            border-radius: 50%; background: linear-gradient(135deg, #a7f3d0 0%, #10b981 100%);
-            color: #0f172a; border: none; font-size: 32px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4); cursor: pointer; z-index: 1000;
-            transition: transform 0.2s;
-        }
-        .fab:active { transform: scale(0.9); }
+    /* Карточка статуса */
+    .status-card {
+      background: rgba(30, 30, 46, 0.8);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
 
-        /* === МОДАЛЬНОЕ ОКНО (НИЖНЯЯ ШТОРКА) === */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.6); z-index: 2000;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
-        }
-        .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        
-        .modal-sheet {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: #1e1e2e; border-radius: 24px 24px 0 0;
-            padding: 24px 20px 40px; z-index: 2001;
-            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            max-height: 90vh; overflow-y: auto;
-        }
-        .modal-sheet.active { transform: translateY(0); }
+    .status-item {
+      text-align: center;
+    }
 
-        .modal-handle {
-            width: 40px; height: 4px; background: #475569; border-radius: 2px;
-            margin: 0 auto 20px;
-        }
-        .modal-title { font-size: 18px; font-weight: 600; color: #a7f3d0; margin-bottom: 20px; text-align: center; }
+    .status-label {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
 
-        .form-group { margin-bottom: 16px; }
-        .form-label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 8px; font-weight: 500; }
-        .form-input {
-            width: 100%; padding: 16px; background: #0f172a; color: #e2e8f0;
-            border: 1px solid rgba(167, 243, 208, 0.2); border-radius: 12px;
-            font-size: 16px; font-family: inherit; outline: none; transition: border-color 0.2s;
-        }
-        .form-input:focus { border-color: #a7f3d0; }
-        textarea.form-input { resize: none; min-height: 80px; }
+    .status-value {
+      font-size: 24px;
+      font-weight: 700;
+    }
 
-        .btn-save {
-            width: 100%; padding: 16px; margin-top: 10px;
-            background: linear-gradient(135deg, #a7f3d0 0%, #10b981 100%);
-            color: #0f172a; border: none; border-radius: 14px;
-            font-size: 16px; font-weight: 700; cursor: pointer;
-        }
-        .btn-save:active { transform: scale(0.98); }
+    .status-value.profit {
+      color: #10b981;
+    }
 
-        /* === АДАПТИВ ПОД ПЛАНШЕТ/ПК === */
-        @media (min-width: 768px) {
-            body { padding-bottom: 20px; }
-            .timeline { max-width: 600px; margin: 0 auto; }
-            .status-card { max-width: 600px; margin: 20px auto; }
-            .fab { bottom: 40px; right: 40px; }
-            .modal-sheet { max-width: 500px; left: 50%; transform: translate(-50%, 100%); border-radius: 24px; margin-bottom: 20px; }
-            .modal-sheet.active { transform: translate(-50%, 0); }
-        }
-    </style>
+    .status-value.missed {
+      color: #f87171;
+    }
+
+    /* Лента времени */
+    .timeline {
+      position: relative;
+      padding: 20px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 30px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, #a7f3d0 0%, #c4b5fd 100%);
+      opacity: 0.3;
+    }
+
+    /* Карточка события */
+    .event-card {
+      position: relative;
+      background: rgba(30, 30, 46, 0.8);
+      border-radius: 16px;
+      padding: 20px;
+      margin-left: 50px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(167, 243, 208, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .event-card:hover {
+      border-color: rgba(167, 243, 208, 0.3);
+      transform: translateX(4px);
+    }
+
+    .event-card::before {
+      content: '';
+      position: absolute;
+      left: -30px;
+      top: 24px;
+      width: 12px;
+      height: 12px;
+      background: #a7f3d0;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(167, 243, 208, 0.6);
+    }
+
+    .event-date {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+
+    .event-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #e2e8f0;
+    }
+
+    .event-desc {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .event-finance {
+      display: inline-block;
+      padding: 6px 12px;
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Медиа в карточке */
+    .event-media {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .event-media img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      border: 2px solid rgba(167, 243, 208, 0.3);
+    }
+
+    .event-media img:hover {
+      transform: scale(1.05);
+    }
+
+    /* FAB кнопка */
+    .fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #a7f3d0 0%, #10b981 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+      transition: all 0.3s ease;
+      z-index: 99;
+    }
+
+    .fab:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
+    }
+
+    /* Модальное окно */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 200;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #1e1e2e;
+      border-radius: 24px 24px 0 0;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+      }
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    /* Форма */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(167, 243, 208, 0.2);
+      border-radius: 12px;
+      color: #e2e8f0;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #a7f3d0;
+      background: rgba(15, 23, 42, 1);
+    }
+
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #a7f3d0 0%, #10b981 100%);
+      border: none;
+      border-radius: 12px;
+      color: #0f172a;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 12px;
+      background: rgba(167, 243, 208, 0.1);
+      border: 1px solid rgba(167, 243, 208, 0.3);
+      border-radius: 12px;
+      color: #a7f3d0;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(167, 243, 208, 0.2);
+    }
+
+    /* Превью медиа в форме */
+    .media-preview {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .media-preview img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #a7f3d0;
+    }
+
+    /* Пустое состояние */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #94a3b8;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-state-text {
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
+  <!-- Шапка -->
+  <div class="header">
+    <h1>🌿 Субботник жизни</h1>
+  </div>
 
-    <!-- Шапка -->
-    <header class="app-header">
-        <div class="header-title">📅 День защиты детей</div>
-        <div class="header-subtitle">Малояз • 1 июня 2026</div>
-    </header>
-
-    <!-- Карточка статуса -->
-    <div class="status-card">
-        <div class="status-title">📊 Итоги и статус</div>
-        <div class="status-grid">
-            <div class="status-item">
-                <div class="status-label">Прибыль</div>
-                <div class="status-value profit" id="total-profit">0 ₽</div>
-            </div>
-            <div class="status-item">
-                <div class="status-label">Упущено</div>
-                <div class="status-value missed">Упаковка</div>
-            </div>
-        </div>
+  <!-- Карточка статуса -->
+  <div class="status-card">
+    <div class="status-item">
+      <div class="status-label">Прибыль</div>
+      <div class="status-value profit" id="totalProfit">0 ₽</div>
     </div>
-
-    <!-- Лента времени -->
-    <div class="timeline" id="timeline-container">
-        <!-- События будут добавляться сюда через JS -->
+    <div class="status-item">
+      <div class="status-label">Упущено</div>
+      <div class="status-value missed" id="totalMissed">0 ₽</div>
     </div>
+  </div>
 
-    <!-- Плавающая кнопка -->
-    <button class="fab" id="fab-btn">+</button>
+  <!-- Лента времени -->
+  <div class="timeline" id="timeline">
+    <!-- События будут здесь -->
+  </div>
 
-    <!-- Модальное окно (Форма) -->
-    <div class="modal-overlay" id="modal-overlay"></div>
-    <div class="modal-sheet" id="modal-sheet">
-        <div class="modal-handle"></div>
+  <!-- FAB кнопка -->
+  <div class="fab" onclick="openModal()">+</div>
+
+  <!-- Модальное окно -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-header">
         <div class="modal-title">Новое событие</div>
-        
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+
+      <form id="eventForm">
         <div class="form-group">
-            <label class="form-label">Дата и время</label>
-            <input type="text" class="form-input" id="input-date" placeholder="Например: 1 июня • 12:00">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Заголовок</label>
-            <input type="text" class="form-input" id="input-title" placeholder="Коротко о событии">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Описание</label>
-            <textarea class="form-input" id="input-desc" placeholder="Детали, мысли, итоги..."></textarea>
-        </div>
-        <div class="form-group">
-            <label class="form-label">Сумма (если есть, со знаком + или -)</label>
-            <input type="text" class="form-input" id="input-finance" placeholder="Например: +5000 или -1200">
+          <label>Дата и время</label>
+          <input type="datetime-local" id="dateInput" required>
         </div>
 
-        <button class="btn-save" id="btn-save">Сохранить в память</button>
+        <div class="form-group">
+          <label>Название</label>
+          <input type="text" id="titleInput" placeholder="Например: Пик продаж" required>
+        </div>
+
+        <div class="form-group">
+          <label>Описание</label>
+          <textarea id="descInput" placeholder="Что произошло?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Прибыль (₽)</label>
+          <input type="number" id="financeInput" placeholder="18800">
+        </div>
+
+        <div class="form-group">
+          <label for="mediaInput">📷 Фото (необязательно)</label>
+          <input 
+            type="file" 
+            id="mediaInput" 
+            accept="image/*" 
+            multiple
+            style="display: none;"
+          >
+          <button 
+            type="button" 
+            onclick="document.getElementById('mediaInput').click()"
+            class="btn-secondary"
+          >
+            Выбрать фото
+          </button>
+          <div id="mediaPreview" class="media-preview"></div>
+        </div>
+
+        <button type="submit" class="btn-primary">Сохранить</button>
+      </form>
     </div>
+  </div>
 
-    <script>
-        // === ДАННЫЕ ===
-        // Стартовые данные (если в памяти пусто)
-        const defaultEvents = [
-            { date: "15 мая • 14:00", title: "Встреча с Алмазом", desc: "Рождение идеи, обсуждение гипотез", finance: "" },
-            { date: "30 мая • 18:30", title: "Закуп в Дёме", desc: "Финальная подготовка, проверка оборудования", finance: "-2150" },
-            { date: "1 июня • 12:00", title: "Пик продаж", desc: "Два часа непрерывной работы, ~150 порций", finance: "+18800" }
-        ];
+  <script>
+    // Временное хранилище для медиа
+    window.tempMedia = [];
 
-        // Загрузка из LocalStorage или использование стартовых
-        let events = JSON.parse(localStorage.getItem('sz_timeline_events')) || defaultEvents;
+    // Загрузка событий из LocalStorage
+    function loadEvents() {
+      return JSON.parse(localStorage.getItem('sz_timeline_events') || '[]');
+    }
 
-        // === ЭЛЕМЕНТЫ DOM ===
-        const timelineContainer = document.getElementById('timeline-container');
-        const fabBtn = document.getElementById('fab-btn');
-        const modalOverlay = document.getElementById('modal-overlay');
-        const modalSheet = document.getElementById('modal-sheet');
-        const btnSave = document.getElementById('btn-save');
-        const totalProfitEl = document.getElementById('total-profit');
+    // Сохранение событий в LocalStorage
+    function saveEvents(events) {
+      localStorage.setItem('sz_timeline_events', JSON.stringify(events));
+    }
 
-        // === ФУНКЦИИ ===
-        function renderEvents() {
-            timelineContainer.innerHTML = '';
-            let profit = 0;
+    // Форматирование даты
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 
+                      'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+      const day = date.getDate();
+      const month = months[date.getMonth()];
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${day} ${month} • ${hours}:${minutes}`;
+    }
 
-            events.forEach(event => {
-                // Считаем прибыль
-                if (event.finance) {
-                    profit += parseInt(event.finance.replace(/\D/g, '')) * (event.finance.startsWith('-') ? -1 : 1);
-                }
+    // Обновление карточки статуса
+    function updateStatus() {
+      const events = loadEvents();
+      let profit = 0;
+      let missed = 0;
 
-                // Создаем карточку
-                const card = document.createElement('div');
-                card.className = 'event-card';
-                
-                let tagsHtml = '';
-                if (event.finance) {
-                    const isIncome = event.finance.startsWith('+');
-                    tagsHtml += `<span class="tag ${isIncome ? 'income' : 'expense'}">${event.finance} ₽</span>`;
-                }
-
-                card.innerHTML = `
-                    <div class="event-dot"></div>
-                    <div class="event-date">${event.date}</div>
-                    <div class="event-title">${event.title}</div>
-                    <div class="event-preview">${event.desc}</div>
-                    ${tagsHtml ? `<div class="event-tags">${tagsHtml}</div>` : ''}
-                `;
-                timelineContainer.appendChild(card);
-            });
-
-            // Обновляем сводку
-            totalProfitEl.textContent = profit.toLocaleString('ru-RU') + ' ₽';
+      events.forEach(event => {
+        const value = parseFloat(event.finance) || 0;
+        if (value > 0) {
+          profit += value;
+        } else {
+          missed += Math.abs(value);
         }
+      });
 
-        function openModal() {
-            modalOverlay.classList.add('active');
-            modalSheet.classList.add('active');
-        }
+      document.getElementById('totalProfit').textContent = `${profit.toLocaleString('ru-RU')} ₽`;
+      document.getElementById('totalMissed').textContent = `${missed.toLocaleString('ru-RU')} ₽`;
+    }
 
-        function closeModal() {
-            modalOverlay.classList.remove('active');
-            modalSheet.classList.remove('active');
-            // Очистка формы
-            document.getElementById('input-date').value = '';
-            document.getElementById('input-title').value = '';
-            document.getElementById('input-desc').value = '';
-            document.getElementById('input-finance').value = '';
-        }
+    // Рендер событий
+    function renderEvents() {
+      const events = loadEvents();
+      const timeline = document.getElementById('timeline');
 
-        function saveEvent() {
-            const date = document.getElementById('input-date').value.trim();
-            const title = document.getElementById('input-title').value.trim();
-            const desc = document.getElementById('input-desc').value.trim();
-            const finance = document.getElementById('input-finance').value.trim();
+      if (events.length === 0) {
+        timeline.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📝</div>
+            <div class="empty-state-text">Пока нет событий</div>
+          </div>
+        `;
+        return;
+      }
 
-            if (!date || !title) {
-                alert('Пожалуйста, заполни дату и заголовок!');
-                return;
-            }
+      // Сортировка по дате (новые сверху)
+      events.sort((a, b) => b.sortDate - a.sortDate);
 
-            const newEvent = { date, title, desc, finance };
-            events.push(newEvent);
-            
-            // Сохраняем в память телефона
-            localStorage.setItem('sz_timeline_events', JSON.stringify(events));
-            
-            renderEvents();
-            closeModal();
-        }
+      timeline.innerHTML = events.map(event => {
+        const mediaHtml = event.media && event.media.length > 0 
+          ? `<div class="event-media">
+               ${event.media.map(src => `<img src="${src}" alt="event photo" onclick="viewImage('${src}')"`).join('')}
+             </div>`
+          : '';
 
-        // === СОБЫТИЯ ===
-        fabBtn.addEventListener('click', openModal);
-        modalOverlay.addEventListener('click', closeModal);
-        btnSave.addEventListener('click', saveEvent);
+        return `
+          <div class="event-card">
+            <div class="event-date">${event.date}</div>
+            <div class="event-title">${event.title}</div>
+            <div class="event-desc">${event.desc || ''}</div>
+            ${event.finance ? `<div class="event-finance">${event.finance} ₽</div>` : ''}
+            ${mediaHtml}
+          </div>
+        `;
+      }).join('');
 
-        // Первичная отрисовка
-        renderEvents();
-    </script>
+      updateStatus();
+    }
+
+    // Открыть модальное окно
+    function openModal() {
+      document.getElementById('modal').classList.add('active');
+      document.getElementById('dateInput').value = new Date().toISOString().slice(0, 16);
+    }
+
+    // Закрыть модальное окно
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+      document.getElementById('eventForm').reset();
+      document.getElementById('mediaPreview').innerHTML = '';
+      window.tempMedia = [];
+    }
+
+    // Конвертация файла в base64
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Обработка загрузки фото
+    document.getElementById('mediaInput')?.addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files);
+      const mediaArray = [];
+
+      for (const file of files) {
+        const base64 = await fileToBase64(file);
+        mediaArray.push(base64);
+      }
+
+      // Показать превью в форме
+      const preview = document.getElementById('mediaPreview');
+      preview.innerHTML = mediaArray.map(src => 
+        `<img src="${src}" alt="preview">`
+      ).join('');
+
+      // Сохранить во временную переменную
+      window.tempMedia = mediaArray;
+    });
+
+    // Обработка формы
+    document.getElementById('eventForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const dateValue = document.getElementById('dateInput').value;
+      const event = {
+        date: formatDate(dateValue),
+        title: document.getElementById('titleInput').value,
+        desc: document.getElementById('descInput').value,
+        finance: document.getElementById('financeInput').value,
+        sortDate: new Date(dateValue).getTime(),
+        media: window.tempMedia || []
+      };
+
+      const events = loadEvents();
+      events.push(event);
+      saveEvents(events);
+
+      closeModal();
+      renderEvents();
+    });
+
+    // Просмотр изображения
+    function viewImage(src) {
+      const img = new Image();
+      img.src = src;
+      img.style.maxWidth = '100%';
+      img.style.maxHeight = '100%';
+      
+      const overlay = document.createElement('div');
+      overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 300;
+        cursor: pointer;
+      `;
+      
+      overlay.appendChild(img);
+      overlay.onclick = () => overlay.remove();
+      document.body.appendChild(overlay);
+    }
+
+    // Закрытие модального окна по клику вне контента
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if (e.target.id === 'modal') {
+        closeModal();
+      }
+    });
+
+    // Инициализация
+    renderEvents();
+  </script>
 </body>
 </html>
