@@ -27,6 +27,13 @@
       border-bottom: 1px solid rgba(167, 243, 208, 0.2);
     }
 
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
     .header h1 {
       font-size: 20px;
       font-weight: 600;
@@ -34,8 +41,41 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 12px;
     }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Кнопки в шапке */
+    .mode-toggle {
+      padding: 6px 12px;
+      background: rgba(196, 181, 253, 0.2);
+      border: 1px solid #c4b5fd;
+      color: #c4b5fd;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .mode-toggle.view-mode {
+      background: rgba(148, 163, 184, 0.2);
+      border-color: #94a3b8;
+      color: #94a3b8;
+    }
+
+    .settings-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 6px;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+    .settings-btn:hover { opacity: 1; }
 
     /* Фильтры категорий */
     .filters {
@@ -59,18 +99,13 @@
       white-space: nowrap;
       transition: all 0.3s ease;
     }
-
     .filter-btn.active {
       background: linear-gradient(135deg, #a7f3d0 0%, #10b981 100%);
       border-color: #10b981;
       color: #0f172a;
       font-weight: 600;
     }
-
-    .filter-btn:hover:not(.active) {
-      border-color: #a7f3d0;
-      color: #e2e8f0;
-    }
+    .filter-btn:hover:not(.active) { border-color: #a7f3d0; color: #e2e8f0; }
 
     /* Карточка статуса */
     .status-card {
@@ -82,7 +117,6 @@
       grid-template-columns: 1fr 1fr;
       gap: 16px;
     }
-
     .status-item { text-align: center; }
     .status-label { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
     .status-value { font-size: 22px; font-weight: 700; }
@@ -117,13 +151,7 @@
     .event-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #e2e8f0; }
     .event-desc { font-size: 14px; color: #94a3b8; margin-bottom: 12px; line-height: 1.5; }
     
-    .event-tags {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
+    .event-tags { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
     .event-tag {
       padding: 4px 10px;
       background: rgba(167, 243, 208, 0.1);
@@ -140,7 +168,6 @@
     .event-finance.income { background: rgba(16, 185, 129, 0.2); color: #10b981; }
     .event-finance.expense { background: rgba(248, 113, 113, 0.2); color: #f87171; }
 
-    /* Медиа в карточке */
     .event-media { display: flex; gap: 8px; margin-top: 12px; overflow-x: auto; padding-bottom: 8px; }
     .event-media img {
       width: 100px; height: 100px; object-fit: cover; border-radius: 12px;
@@ -154,7 +181,9 @@
       border-radius: 50%; display: flex; align-items: center; justify-content: center;
       font-size: 32px; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
       z-index: 99; border: none; color: #0f172a;
+      transition: all 0.3s ease;
     }
+    .fab.hidden { opacity: 0; pointer-events: none; transform: scale(0.5); }
 
     /* Модальные окна */
     .modal {
@@ -182,9 +211,7 @@
       border: 1px solid rgba(167, 243, 208, 0.2); border-radius: 12px;
       color: #e2e8f0; font-size: 16px; transition: all 0.3s ease;
     }
-    .form-group select {
-      cursor: pointer;
-    }
+    .form-group select { cursor: pointer; }
     .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
       outline: none; border-color: #a7f3d0; background: rgba(15, 23, 42, 1);
     }
@@ -207,7 +234,7 @@
       color: #f87171; font-size: 14px; font-weight: 500; cursor: pointer;
     }
 
-    /* Переключатель */
+    /* Переключатель финансов */
     .toggle-container { display: flex; gap: 8px; margin-bottom: 12px; }
     .toggle-btn {
       flex: 1; padding: 10px; border: 2px solid rgba(167, 243, 208, 0.3);
@@ -233,11 +260,17 @@
 <body>
   <!-- Шапка -->
   <div class="header">
-    <h1>🌿 СЖ: Хронология</h1>
+    <div class="header-top">
+      <h1>🌿 СЖ: Хронология</h1>
+      <div class="header-actions">
+        <button class="mode-toggle" id="modeToggle" onclick="toggleEditMode()">✏️ Ред.</button>
+        <button class="settings-btn" onclick="openSettings()">️</button>
+      </div>
+    </div>
     <div class="filters" id="filters">
       <button class="filter-btn active" data-category="all" onclick="filterByCategory('all')">Все</button>
       <button class="filter-btn" data-category="Бизнес" onclick="filterByCategory('Бизнес')">📦 Бизнес</button>
-      <button class="filter-btn" data-category="Проект СЖ" onclick="filterByCategory('Проект СЖ')"> СЖ</button>
+      <button class="filter-btn" data-category="Проект СЖ" onclick="filterByCategory('Проект СЖ')">🚀 СЖ</button>
       <button class="filter-btn" data-category="Личное" onclick="filterByCategory('Личное')">🏠 Личное</button>
       <button class="filter-btn" data-category="Другое" onclick="filterByCategory('Другое')">📌 Другое</button>
     </div>
@@ -259,7 +292,7 @@
   <div class="timeline" id="timeline"></div>
 
   <!-- FAB кнопка -->
-  <button class="fab" onclick="openModal()">+</button>
+  <button class="fab" id="fabBtn" onclick="openModal()">+</button>
 
   <!-- Модальное окно: Новое событие -->
   <div class="modal" id="modal">
@@ -280,9 +313,7 @@
         </div>
         <div class="form-group">
           <label>Подкатегория</label>
-          <select id="subcategoryInput" required>
-            <!-- Заполняется динамически -->
-          </select>
+          <select id="subcategoryInput" required></select>
         </div>
         <div class="form-group">
           <label>Дата и время</label>
@@ -328,15 +359,15 @@
         <button class="modal-close" onclick="closeSettings()">×</button>
       </div>
       <div class="form-group">
-        <label>Экспорт данных (Скачать бэкап)</label>
-        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">Сохранит все события в JSON файл на твой телефон/ПК.</p>
-        <button onclick="exportData()" class="btn-primary">📥 Скачать бэкап</button>
+        <label>Массовый импорт (JSON)</label>
+        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">Загрузи готовую хронологию из файла, который сгенерировал ИИ.</p>
+        <input type="file" id="importInput" accept=".json" style="display: none;" onchange="importData(event)">
+        <button onclick="document.getElementById('importInput').click()" class="btn-primary">📤 Загрузить хронологию</button>
       </div>
       <div class="form-group">
-        <label>Импорт данных (Загрузить бэкап)</label>
-        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">Восстановит события из JSON файла. Заменит текущие данные.</p>
-        <input type="file" id="importInput" accept=".json" style="display: none;" onchange="importData(event)">
-        <button onclick="document.getElementById('importInput').click()" class="btn-secondary">📤 Загрузить бэкап</button>
+        <label>Экспорт данных (Скачать бэкап)</label>
+        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">Сохранит все события в JSON файл на твой телефон/ПК.</p>
+        <button onclick="exportData()" class="btn-secondary">📥 Скачать бэкап</button>
       </div>
       <div class="form-group" style="margin-top: 30px;">
         <label>Опасная зона</label>
@@ -348,8 +379,10 @@
   <script>
     window.tempMedia = [];
     window.currentFilter = 'all';
+    
+    // Режим приложения (по умолчанию редактирование)
+    window.isEditMode = localStorage.getItem('sz_app_mode') !== 'view';
 
-    // Структура категорий и подкатегорий
     const categories = {
       'Бизнес': ['Товарка', 'Сезонки'],
       'Проект СЖ': ['Прототип', 'Идеи и развитие'],
@@ -424,8 +457,30 @@
       updateStatus();
     }
 
+    // === РЕЖИМЫ ПРОСМОТР / РЕДАКТИРОВАНИЕ ===
+    function toggleEditMode() {
+      window.isEditMode = !window.isEditMode;
+      localStorage.setItem('sz_app_mode', window.isEditMode ? 'edit' : 'view');
+      updateAppMode();
+    }
+
+    function updateAppMode() {
+      const btn = document.getElementById('modeToggle');
+      const fab = document.getElementById('fabBtn');
+      if (window.isEditMode) {
+        btn.textContent = '✏️ Ред.';
+        btn.classList.remove('view-mode');
+        fab.classList.remove('hidden');
+      } else {
+        btn.textContent = '🔒 Просм.';
+        btn.classList.add('view-mode');
+        fab.classList.add('hidden');
+      }
+    }
+
     // Модальные окна
     function openModal() {
+      if (!window.isEditMode) return; // Блокировка открытия в режиме просмотра
       document.getElementById('modal').classList.add('active');
       document.getElementById('dateInput').value = new Date().toISOString().slice(0, 16);
       setFinanceType('income');
@@ -440,7 +495,6 @@
     function openSettings() { document.getElementById('settingsModal').classList.add('active'); }
     function closeSettings() { document.getElementById('settingsModal').classList.remove('active'); }
 
-    // Обновление подкатегорий
     function updateSubcategories() {
       const category = document.getElementById('categoryInput').value;
       const subcategories = categories[category] || ['Общее'];
@@ -448,7 +502,6 @@
       select.innerHTML = subcategories.map(sub => `<option value="${sub}">${sub}</option>`).join('');
     }
 
-    // Переключатель финансов
     function setFinanceType(type) {
       document.getElementById('financeType').value = type;
       document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
@@ -461,7 +514,6 @@
       if (type !== 'skip') setTimeout(() => input.focus(), 100);
     }
 
-    // Фото
     function fileToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -478,7 +530,6 @@
       window.tempMedia = mediaArray;
     });
 
-    // Сохранение события
     document.getElementById('eventForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const dateValue = document.getElementById('dateInput').value;
@@ -506,7 +557,6 @@
       renderEvents();
     });
 
-    // Просмотр фото
     function viewImage(src) {
       const overlay = document.createElement('div');
       overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:300;cursor:pointer;padding:20px;';
@@ -518,7 +568,6 @@
       document.body.appendChild(overlay);
     }
 
-    // === ЭКСПОРТ / ИМПОРТ / ОЧИСТКА ===
     function exportData() {
       const data = localStorage.getItem('sz_timeline_events') || '[]';
       const blob = new Blob([data], { type: 'application/json' });
@@ -528,7 +577,7 @@
       a.download = `sz_backup_${new Date().toISOString().slice(0,10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      alert('✅ Бэкап скачан! Сохрани этот файл в надежном месте.');
+      alert('✅ Бэкап скачан!');
     }
 
     function importData(event) {
@@ -542,7 +591,7 @@
             localStorage.setItem('sz_timeline_events', JSON.stringify(data));
             renderEvents();
             closeSettings();
-            alert('✅ Данные успешно восстановлены!');
+            alert('✅ Хронология успешно загружена!');
           } else {
             alert('❌ Неверный формат файла.');
           }
@@ -554,14 +603,13 @@
     }
 
     function clearData() {
-      if (confirm('️ Ты уверен? Все события будут удалены безвозвратно!')) {
+      if (confirm('⚠️ Ты уверен? Все события будут удалены безвозвратно!')) {
         localStorage.removeItem('sz_timeline_events');
         renderEvents();
         closeSettings();
       }
     }
 
-    // Закрытие по клику вне
     document.querySelectorAll('.modal').forEach(modal => {
       modal.addEventListener('click', (e) => {
         if (e.target === modal) {
@@ -572,6 +620,7 @@
     });
 
     // Инициализация
+    updateAppMode();
     renderEvents();
   </script>
 </body>
