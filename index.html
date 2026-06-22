@@ -7,7 +7,6 @@
   <title>Субботник жизни — Хронология</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #0f172a 0%, #1e1e2e 100%);
@@ -18,339 +17,240 @@
 
     /* Шапка */
     .header {
-      position: sticky;
-      top: 0;
-      background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 16px 20px;
-      z-index: 100;
+      position: sticky; top: 0; background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px); padding: 16px 20px; z-index: 100;
       border-bottom: 1px solid rgba(167, 243, 208, 0.2);
     }
-
-    .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
+    .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .header h1 {
-      font-size: 20px;
-      font-weight: 600;
+      font-size: 20px; font-weight: 600;
       background: linear-gradient(135deg, #a7f3d0 0%, #c4b5fd 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-
-    .header-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    /* Кнопки в шапке */
+    .header-actions { display: flex; gap: 8px; }
+    
     .mode-toggle {
-      padding: 6px 12px;
-      background: rgba(196, 181, 253, 0.2);
-      border: 1px solid #c4b5fd;
-      color: #c4b5fd;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
+      padding: 6px 12px; background: rgba(196, 181, 253, 0.2); border: 1px solid #c4b5fd;
+      color: #c4b5fd; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer;
     }
-    .mode-toggle.view-mode {
-      background: rgba(148, 163, 184, 0.2);
-      border-color: #94a3b8;
-      color: #94a3b8;
-    }
+    .mode-toggle.view-mode { background: rgba(148, 163, 184, 0.2); border-color: #94a3b8; color: #94a3b8; }
+    .settings-btn { background: none; border: none; font-size: 20px; cursor: pointer; opacity: 0.7; }
 
-    .settings-btn {
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      padding: 6px;
-      opacity: 0.7;
-      transition: opacity 0.3s;
-    }
-    .settings-btn:hover { opacity: 1; }
-
-    /* Фильтры категорий */
-    .filters {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      scrollbar-width: none;
-    }
+    /* Фильтры */
+    .filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
     .filters::-webkit-scrollbar { display: none; }
-
     .filter-btn {
-      padding: 8px 16px;
-      background: rgba(167, 243, 208, 0.1);
-      border: 1px solid rgba(167, 243, 208, 0.3);
-      border-radius: 20px;
-      color: #94a3b8;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.3s ease;
+      padding: 8px 16px; background: rgba(167, 243, 208, 0.1); border: 1px solid rgba(167, 243, 208, 0.3);
+      border-radius: 20px; color: #94a3b8; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap;
     }
-    .filter-btn.active {
-      background: linear-gradient(135deg, #a7f3d0 0%, #10b981 100%);
-      border-color: #10b981;
-      color: #0f172a;
-      font-weight: 600;
-    }
-    .filter-btn:hover:not(.active) { border-color: #a7f3d0; color: #e2e8f0; }
+    .filter-btn.active { background: linear-gradient(135deg, #a7f3d0 0%, #10b981 100%); border-color: #10b981; color: #0f172a; font-weight: 600; }
 
-    /* Карточка статуса */
-    .status-card {
-      background: rgba(30, 30, 46, 0.8);
-      border-radius: 16px;
-      padding: 20px;
-      margin: 20px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
+    /* Сетка проектов (Главный экран) */
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px; padding: 20px;
     }
-    .status-item { text-align: center; }
-    .status-label { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
-    .status-value { font-size: 22px; font-weight: 700; }
-    .status-value.profit { color: #10b981; }
-    .status-value.missed { color: #f87171; }
+    .project-card {
+      background: rgba(30, 30, 46, 0.8); border: 1px solid rgba(167, 243, 208, 0.1);
+      border-radius: 16px; padding: 16px; cursor: pointer; transition: all 0.3s ease;
+      position: relative; display: flex; flex-direction: column; justify-content: space-between;
+      min-height: 140px;
+    }
+    .project-card:hover { border-color: rgba(167, 243, 208, 0.3); transform: translateY(-2px); }
+    .project-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #e2e8f0; }
+    .project-meta { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+    .project-finance { font-size: 14px; font-weight: 600; margin-top: 8px; }
+    .project-finance.income { color: #10b981; }
+    .project-finance.expense { color: #f87171; }
+    
+    .delete-proj-btn {
+      position: absolute; top: 8px; right: 8px; background: rgba(248, 113, 113, 0.1);
+      border: 1px solid rgba(248, 113, 113, 0.3); border-radius: 6px; width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; color: #f87171;
+    }
 
-    /* Лента времени */
-    .timeline { position: relative; padding: 20px; }
+    /* Лента времени (Экран проекта) */
+    .timeline-view { display: none; padding: 20px; }
+    .back-btn {
+      background: none; border: none; color: #a7f3d0; font-size: 16px; font-weight: 600;
+      cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+    }
+    .timeline { position: relative; }
     .timeline::before {
-      content: ''; position: absolute; left: 30px; top: 0; bottom: 0;
+      content: ''; position: absolute; left: 20px; top: 0; bottom: 0;
       width: 2px; background: linear-gradient(180deg, #a7f3d0 0%, #c4b5fd 100%); opacity: 0.3;
     }
-
-    /* Карточка события */
     .event-card {
-      position: relative;
-      background: rgba(30, 30, 46, 0.8);
-      border-radius: 16px;
-      padding: 20px;
-      margin-left: 50px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(167, 243, 208, 0.1);
-      transition: all 0.3s ease;
+      position: relative; background: rgba(30, 30, 46, 0.8); border-radius: 16px;
+      padding: 16px; margin-left: 40px; margin-bottom: 16px; border: 1px solid rgba(167, 243, 208, 0.1);
     }
     .event-card::before {
-      content: ''; position: absolute; left: -30px; top: 24px;
-      width: 12px; height: 12px; background: #a7f3d0; border-radius: 50%;
-      box-shadow: 0 0 12px rgba(167, 243, 208, 0.6);
+      content: ''; position: absolute; left: -26px; top: 20px; width: 10px; height: 10px;
+      background: #a7f3d0; border-radius: 50%; box-shadow: 0 0 12px rgba(167, 243, 208, 0.6);
     }
-
-    /* Кнопка удаления события */
-    .delete-btn {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: rgba(248, 113, 113, 0.1);
-      border: 1px solid rgba(248, 113, 113, 0.3);
-      border-radius: 8px;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      color: #f87171;
-      padding: 0;
-    }
-
-    .delete-btn:hover {
-      background: rgba(248, 113, 113, 0.3);
-      transform: scale(1.1);
-    }
-
-    .event-date { font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
-    .event-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #e2e8f0; padding-right: 40px; }
-    .event-desc { font-size: 14px; color: #94a3b8; margin-bottom: 12px; line-height: 1.5; }
-    
-    .event-tags { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-    .event-tag {
-      padding: 4px 10px;
-      background: rgba(167, 243, 208, 0.1);
-      border: 1px solid rgba(167, 243, 208, 0.3);
-      border-radius: 12px;
-      font-size: 11px;
-      color: #a7f3d0;
-    }
-
-    .event-finance {
-      display: inline-block; padding: 6px 12px; border-radius: 8px;
-      font-size: 14px; font-weight: 600; margin-right: 8px;
-    }
+    .event-date { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+    .event-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #e2e8f0; padding-right: 30px; }
+    .event-desc { font-size: 14px; color: #94a3b8; margin-bottom: 8px; line-height: 1.4; }
+    .event-finance { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: 600; }
     .event-finance.income { background: rgba(16, 185, 129, 0.2); color: #10b981; }
     .event-finance.expense { background: rgba(248, 113, 113, 0.2); color: #f87171; }
-
-    .event-media { display: flex; gap: 8px; margin-top: 12px; overflow-x: auto; padding-bottom: 8px; }
-    .event-media img {
-      width: 100px; height: 100px; object-fit: cover; border-radius: 12px;
-      cursor: pointer; border: 2px solid rgba(167, 243, 208, 0.3);
+    .event-media { display: flex; gap: 8px; margin-top: 8px; overflow-x: auto; }
+    .event-media img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(167, 243, 208, 0.3); }
+    
+    .delete-event-btn {
+      position: absolute; top: 12px; right: 12px; background: rgba(248, 113, 113, 0.1);
+      border: 1px solid rgba(248, 113, 113, 0.3); border-radius: 6px; width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; color: #f87171;
     }
 
-    /* FAB кнопка */
+    /* FAB */
     .fab {
       position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
-      background: linear-gradient(135deg, #a7f3d0 0%, #10b981 100%);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 32px; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
-      z-index: 99; border: none; color: #0f172a;
-      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #a7f3d0 0%, #10b981 100%); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 32px;
+      cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4); z-index: 99; border: none; color: #0f172a;
     }
     .fab.hidden { opacity: 0; pointer-events: none; transform: scale(0.5); }
 
     /* Модальные окна */
     .modal {
       display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.7); z-index: 200;
-      align-items: flex-end; justify-content: center;
+      background: rgba(0, 0, 0, 0.7); z-index: 200; align-items: flex-end; justify-content: center;
     }
     .modal.active { display: flex; }
     .modal-content {
-      background: #1e1e2e; border-radius: 24px 24px 0 0;
-      width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;
-      padding: 24px; animation: slideUp 0.3s ease;
+      background: #1e1e2e; border-radius: 24px 24px 0 0; width: 100%; max-width: 500px;
+      max-height: 90vh; overflow-y: auto; padding: 24px; animation: slideUp 0.3s ease;
     }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .modal-title { font-size: 20px; font-weight: 600; }
     .modal-close { background: none; border: none; color: #94a3b8; font-size: 24px; cursor: pointer; }
 
-    /* Форма */
     .form-group { margin-bottom: 20px; }
     .form-group label { display: block; font-size: 14px; color: #94a3b8; margin-bottom: 8px; }
     .form-group input, .form-group textarea, .form-group select {
       width: 100%; padding: 12px 16px; background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(167, 243, 208, 0.2); border-radius: 12px;
-      color: #e2e8f0; font-size: 16px; transition: all 0.3s ease;
+      border: 1px solid rgba(167, 243, 208, 0.2); border-radius: 12px; color: #e2e8f0; font-size: 16px;
     }
-    .form-group select { cursor: pointer; }
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-      outline: none; border-color: #a7f3d0; background: rgba(15, 23, 42, 1);
-    }
-    .form-group textarea { min-height: 100px; resize: vertical; }
-
-    /* Кнопки */
+    .form-group textarea { min-height: 80px; resize: vertical; }
+    
     .btn-primary {
       width: 100%; padding: 16px; background: linear-gradient(135deg, #a7f3d0 0%, #10b981 100%);
-      border: none; border-radius: 12px; color: #0f172a; font-size: 16px;
-      font-weight: 600; cursor: pointer; margin-bottom: 12px;
+      border: none; border-radius: 12px; color: #0f172a; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 12px;
     }
     .btn-secondary {
       width: 100%; padding: 12px; background: rgba(167, 243, 208, 0.1);
-      border: 1px solid rgba(167, 243, 208, 0.3); border-radius: 12px;
-      color: #a7f3d0; font-size: 14px; font-weight: 500; cursor: pointer; margin-bottom: 12px;
+      border: 1px solid rgba(167, 243, 208, 0.3); border-radius: 12px; color: #a7f3d0; font-size: 14px; cursor: pointer; margin-bottom: 12px;
     }
     .btn-danger {
       width: 100%; padding: 12px; background: rgba(248, 113, 113, 0.1);
-      border: 1px solid rgba(248, 113, 113, 0.3); border-radius: 12px;
-      color: #f87171; font-size: 14px; font-weight: 500; cursor: pointer;
+      border: 1px solid rgba(248, 113, 113, 0.3); border-radius: 12px; color: #f87171; font-size: 14px; cursor: pointer;
     }
 
-    /* Переключатель финансов */
     .toggle-container { display: flex; gap: 8px; margin-bottom: 12px; }
     .toggle-btn {
       flex: 1; padding: 10px; border: 2px solid rgba(167, 243, 208, 0.3);
-      background: rgba(15, 23, 42, 0.6); color: #94a3b8; border-radius: 8px;
-      font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.3s ease;
+      background: rgba(15, 23, 42, 0.6); color: #94a3b8; border-radius: 8px; font-size: 14px; cursor: pointer;
     }
     .toggle-btn.active[data-type="income"] { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #10b981; }
     .toggle-btn.active[data-type="expense"] { background: rgba(248, 113, 113, 0.2); border-color: #f87171; color: #f87171; }
     .toggle-btn.active[data-type="skip"] { background: rgba(148, 163, 184, 0.2); border-color: #94a3b8; color: #94a3b8; }
 
-    #financeInput.income { border-color: #10b981; color: #10b981; }
-    #financeInput.expense { border-color: #f87171; color: #f87171; }
-    #financeInput.skip { border-color: #94a3b8; color: #94a3b8; opacity: 0.5; }
-
-    /* Превью медиа */
     .media-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-    .media-preview img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #a7f3d0; }
-
+    .media-preview img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 2px solid #a7f3d0; }
+    
     .empty-state { text-align: center; padding: 60px 20px; color: #94a3b8; }
-    .empty-state-icon { font-size: 64px; margin-bottom: 16px; opacity: 0.5; }
   </style>
 </head>
 <body>
-  <!-- Шапка -->
-  <div class="header">
-    <div class="header-top">
-      <h1>🌿 СЖ: Хронология</h1>
-      <div class="header-actions">
-        <button class="mode-toggle" id="modeToggle" onclick="toggleEditMode()">✏️ Ред.</button>
-        <button class="settings-btn" onclick="openSettings()">️</button>
+
+  <!-- ГЛАВНЫЙ ЭКРАН: СПИСОК ПРОЕКТОВ -->
+  <div id="main-view">
+    <div class="header">
+      <div class="header-top">
+        <h1>🌿 СЖ: Проекты</h1>
+        <div class="header-actions">
+          <button class="mode-toggle" id="modeToggle" onclick="toggleEditMode()">✏️ Ред.</button>
+          <button class="settings-btn" onclick="openSettings()">️</button>
+        </div>
+      </div>
+      <div class="filters">
+        <button class="filter-btn active" onclick="filterProjects('all', this)">Все</button>
+        <button class="filter-btn" onclick="filterProjects('Бизнес', this)"> Бизнес</button>
+        <button class="filter-btn" onclick="filterProjects('Проект СЖ', this)">🚀 СЖ</button>
+        <button class="filter-btn" onclick="filterProjects('Личное', this)">🏠 Личное</button>
+        <button class="filter-btn" onclick="filterProjects('Другое', this)">📌 Другое</button>
       </div>
     </div>
-    <div class="filters" id="filters">
-      <button class="filter-btn active" data-category="all" onclick="filterByCategory('all')">Все</button>
-      <button class="filter-btn" data-category="Бизнес" onclick="filterByCategory('Бизнес')">📦 Бизнес</button>
-      <button class="filter-btn" data-category="Проект СЖ" onclick="filterByCategory('Проект СЖ')">🚀 СЖ</button>
-      <button class="filter-btn" data-category="Личное" onclick="filterByCategory('Личное')">🏠 Личное</button>
-      <button class="filter-btn" data-category="Другое" onclick="filterByCategory('Другое')">📌 Другое</button>
-    </div>
+    <div class="projects-grid" id="projectsGrid"></div>
   </div>
 
-  <!-- Карточка статуса -->
-  <div class="status-card">
-    <div class="status-item">
-      <div class="status-label">Прибыль</div>
-      <div class="status-value profit" id="totalProfit">0 ₽</div>
+  <!-- ЭКРАН ПРОЕКТА: ЛЕНТА СОБЫТИЙ -->
+  <div id="project-view" class="timeline-view">
+    <div class="header" style="position: relative; border-bottom: none; padding-bottom: 0;">
+      <button class="back-btn" onclick="goBack()">← Назад к проектам</button>
     </div>
-    <div class="status-item">
-      <div class="status-label">Упущено</div>
-      <div class="status-value missed" id="totalMissed">0 ₽</div>
-    </div>
+    <h2 id="projectTitle" style="padding: 0 20px 20px; font-size: 24px;"></h2>
+    <div class="timeline" id="timeline"></div>
   </div>
 
-  <!-- Лента времени -->
-  <div class="timeline" id="timeline"></div>
+  <!-- FAB -->
+  <button class="fab" id="fabBtn" onclick="handleFabClick()">+</button>
 
-  <!-- FAB кнопка -->
-  <button class="fab" id="fabBtn" onclick="openModal()">+</button>
-
-  <!-- Модальное окно: Новое событие -->
-  <div class="modal" id="modal">
+  <!-- МОДАЛКА: НОВЫЙ ПРОЕКТ -->
+  <div class="modal" id="projectModal">
     <div class="modal-content">
       <div class="modal-header">
-        <div class="modal-title">Новое событие</div>
-        <button class="modal-close" onclick="closeModal()">×</button>
+        <div class="modal-title">Новый проект</div>
+        <button class="modal-close" onclick="closeModal('projectModal')">×</button>
       </div>
-      <form id="eventForm">
+      <form id="projectForm">
+        <div class="form-group">
+          <label>Название</label>
+          <input type="text" id="projTitle" placeholder="Например: Сабантуй" required>
+        </div>
         <div class="form-group">
           <label>Категория</label>
-          <select id="categoryInput" required onchange="updateSubcategories()">
+          <select id="projCategory" required>
             <option value="Бизнес">📦 Бизнес</option>
-            <option value="Проект СЖ"> Проект СЖ</option>
+            <option value="Проект СЖ">🚀 Проект СЖ</option>
             <option value="Личное">🏠 Личное</option>
-            <option value="Другое">📌 Другое</option>
+            <option value="Другое"> Другое</option>
           </select>
         </div>
         <div class="form-group">
           <label>Подкатегория</label>
-          <select id="subcategoryInput" required></select>
+          <input type="text" id="projSubcategory" placeholder="Например: Сезонки" required>
         </div>
         <div class="form-group">
+          <label>Краткое описание (необязательно)</label>
+          <textarea id="projSummary" placeholder="О чем этот проект?"></textarea>
+        </div>
+        <button type="submit" class="btn-primary">Создать проект</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- МОДАЛКА: НОВОЕ СОБЫТИЕ -->
+  <div class="modal" id="eventModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Новое событие</div>
+        <button class="modal-close" onclick="closeModal('eventModal')">×</button>
+      </div>
+      <form id="eventForm">
+        <div class="form-group">
           <label>Дата и время</label>
-          <input type="datetime-local" id="dateInput" required>
+          <input type="datetime-local" id="eventDate" required>
         </div>
         <div class="form-group">
           <label>Название</label>
-          <input type="text" id="titleInput" placeholder="Например: Продажа кыста" required>
+          <input type="text" id="eventTitle" placeholder="Что произошло?" required>
         </div>
         <div class="form-group">
           <label>Описание</label>
-          <textarea id="descInput" placeholder="Что произошло?"></textarea>
+          <textarea id="eventDesc" placeholder="Детали..."></textarea>
         </div>
         <div class="form-group">
           <label>Тип операции</label>
@@ -366,140 +266,233 @@
           <input type="number" id="financeInput" placeholder="18800" class="income">
         </div>
         <div class="form-group">
-          <label>📷 Фото (необязательно)</label>
+          <label>📷 Фото</label>
           <input type="file" id="mediaInput" accept="image/*" multiple style="display: none;">
           <button type="button" onclick="document.getElementById('mediaInput').click()" class="btn-secondary">Выбрать фото</button>
           <div id="mediaPreview" class="media-preview"></div>
         </div>
-        <button type="submit" class="btn-primary">Сохранить</button>
+        <button type="submit" class="btn-primary">Сохранить событие</button>
       </form>
     </div>
   </div>
 
-  <!-- Модальное окно: Настройки (Бэкап) -->
+  <!-- МОДАЛКА: НАСТРОЙКИ -->
   <div class="modal" id="settingsModal">
     <div class="modal-content">
       <div class="modal-header">
-        <div class="modal-title">️ Настройки и Бэкап</div>
-        <button class="modal-close" onclick="closeSettings()">×</button>
+        <div class="modal-title">️ Настройки</div>
+        <button class="modal-close" onclick="closeModal('settingsModal')">×</button>
       </div>
       <div class="form-group">
-        <label>Массовый импорт (JSON)</label>
-        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">Загрузи готовую хронологию из файла, который сгенерировал ИИ.</p>
+        <label>Массовый импорт</label>
+        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">Загрузи готовую структуру проектов из JSON.</p>
         <input type="file" id="importInput" accept=".json" style="display: none;" onchange="importData(event)">
-        <button onclick="document.getElementById('importInput').click()" class="btn-primary">📤 Загрузить хронологию</button>
+        <button onclick="document.getElementById('importInput').click()" class="btn-primary">📤 Загрузить JSON</button>
       </div>
       <div class="form-group">
-        <label>Экспорт данных (Скачать бэкап)</label>
-        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">Сохранит все события в JSON файл на твой телефон/ПК.</p>
+        <label>Экспорт данных</label>
         <button onclick="exportData()" class="btn-secondary">📥 Скачать бэкап</button>
       </div>
       <div class="form-group" style="margin-top: 30px;">
-        <label>Опасная зона</label>
         <button onclick="clearData()" class="btn-danger">🗑️ Очистить все данные</button>
       </div>
     </div>
   </div>
 
   <script>
+    // === STATE ===
     window.tempMedia = [];
     window.currentFilter = 'all';
-    
-    // Режим приложения (по умолчанию редактирование)
+    window.currentProjectId = null;
     window.isEditMode = localStorage.getItem('sz_app_mode') !== 'view';
+    
+    // Новая структура данных
+    let projects = JSON.parse(localStorage.getItem('sz_projects_v2') || '[]');
 
-    const categories = {
-      'Бизнес': ['Товарка', 'Сезонки'],
-      'Проект СЖ': ['Прототип', 'Идеи и развитие'],
-      'Личное': ['Здоровье', 'Семья и быт'],
-      'Другое': ['Общее']
-    };
+    const saveProjects = () => localStorage.setItem('sz_projects_v2', JSON.stringify(projects));
 
-    function loadEvents() { return JSON.parse(localStorage.getItem('sz_timeline_events') || '[]'); }
-    function saveEvents(events) { localStorage.setItem('sz_timeline_events', JSON.stringify(events)); }
-
-    function formatDate(dateString) {
-      const date = new Date(dateString);
-      const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-      return `${date.getDate()} ${months[date.getMonth()]} • ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-    }
-
-    function updateStatus() {
-      const events = getFilteredEvents();
-      let profit = 0, missed = 0;
-      events.forEach(event => {
-        if (!event.finance) return;
-        const value = parseFloat(String(event.finance).replace('+', ''));
-        if (value > 0) profit += value;
-        else if (value < 0) missed += Math.abs(value);
-      });
-      document.getElementById('totalProfit').textContent = `${profit.toLocaleString('ru-RU')} ₽`;
-      document.getElementById('totalMissed').textContent = `${missed.toLocaleString('ru-RU')} ₽`;
-    }
-
-    function getFilteredEvents() {
-      const events = loadEvents();
-      if (window.currentFilter === 'all') return events;
-      return events.filter(e => e.category === window.currentFilter);
-    }
-
-    function filterByCategory(category) {
-      window.currentFilter = category;
-      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelector(`[data-category="${category}"]`).classList.add('active');
-      renderEvents();
-    }
-
-    // Удаление события
-    function deleteEvent(sortDate) {
-      if (!confirm('️ Удалить это событие?')) return;
+    // === MAIN VIEW LOGIC ===
+    function renderMain() {
+      const grid = document.getElementById('projectsGrid');
+      let filtered = window.currentFilter === 'all' ? projects : projects.filter(p => p.category === window.currentFilter);
       
-      const events = loadEvents();
-      const updatedEvents = events.filter(e => e.sortDate !== sortDate);
-      saveEvents(updatedEvents);
-      renderEvents();
-    }
-
-    function renderEvents() {
-      const events = getFilteredEvents();
-      const timeline = document.getElementById('timeline');
-      if (events.length === 0) {
-        timeline.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><div>Пока нет событий</div></div>`;
-        updateStatus();
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><div style="font-size: 48px; margin-bottom: 16px;">📝</div><div>Нет проектов. Создай первый!</div></div>`;
         return;
       }
-      events.sort((a, b) => b.sortDate - a.sortDate);
-      timeline.innerHTML = events.map(event => {
-        const mediaHtml = event.media && event.media.length > 0 
-          ? `<div class="event-media">${event.media.map(src => `<img src="${src}" onclick="viewImage('${src}')">`).join('')}</div>` : '';
-        let financeHtml = '';
-        if (event.finance) {
-          const financeClass = event.finance.startsWith('-') ? 'expense' : 'income';
-          financeHtml = `<div class="event-finance ${financeClass}">${event.finance} ₽</div>`;
-        }
-        const tagsHtml = `<div class="event-tags">
-          <span class="event-tag">${event.category}</span>
-          <span class="event-tag">${event.subcategory}</span>
-        </div>`;
+
+      grid.innerHTML = filtered.map(p => {
+        const finance = calculateProjectFinance(p);
+        const financeHtml = finance !== 0 
+          ? `<div class="project-finance ${finance > 0 ? 'income' : 'expense'}">${finance > 0 ? '+' : ''}${finance.toLocaleString('ru-RU')} ₽</div>` 
+          : '';
         
-        // Кнопка удаления (только в режиме редактирования)
         const deleteBtn = window.isEditMode 
-          ? `<button class="delete-btn" onclick="deleteEvent(${event.sortDate})">🗑️</button>` 
+          ? `<button class="delete-proj-btn" onclick="deleteProject('${p.id}', event)">🗑️</button>` 
+          : '';
+
+        return `<div class="project-card" onclick="openProject('${p.id}')">
+          ${deleteBtn}
+          <div>
+            <div class="project-title">${p.title}</div>
+            <div class="project-meta">${p.subcategory} • ${p.events.length} соб.</div>
+          </div>
+          ${financeHtml}
+        </div>`;
+      }).join('');
+    }
+
+    function calculateProjectFinance(project) {
+      let total = 0;
+      project.events.forEach(e => {
+        if (e.finance) {
+          const val = parseFloat(String(e.finance).replace('+', ''));
+          if (!isNaN(val)) total += val;
+        }
+      });
+      return total;
+    }
+
+    function filterProjects(cat, btn) {
+      window.currentFilter = cat;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderMain();
+    }
+
+    // === PROJECT VIEW LOGIC ===
+    function openProject(id) {
+      window.currentProjectId = id;
+      const project = projects.find(p => p.id === id);
+      if (!project) return;
+      
+      document.getElementById('projectTitle').textContent = project.title;
+      document.getElementById('main-view').style.display = 'none';
+      document.getElementById('project-view').style.display = 'block';
+      renderTimeline(project);
+    }
+
+    function goBack() {
+      window.currentProjectId = null;
+      document.getElementById('project-view').style.display = 'none';
+      document.getElementById('main-view').style.display = 'block';
+      renderMain();
+    }
+
+    function renderTimeline(project) {
+      const timeline = document.getElementById('timeline');
+      if (project.events.length === 0) {
+        timeline.innerHTML = `<div class="empty-state"><div style="font-size: 48px; margin-bottom: 16px;">⏳</div><div>Пока нет событий</div></div>`;
+        return;
+      }
+
+      const sortedEvents = [...project.events].sort((a, b) => b.sortDate - a.sortDate);
+      
+      timeline.innerHTML = sortedEvents.map(e => {
+        const mediaHtml = e.media && e.media.length > 0 
+          ? `<div class="event-media">${e.media.map(src => `<img src="${src}" onclick="viewImage('${src}')">`).join('')}</div>` : '';
+        let financeHtml = '';
+        if (e.finance) {
+          const cls = e.finance.startsWith('-') ? 'expense' : 'income';
+          financeHtml = `<div class="event-finance ${cls}">${e.finance} ₽</div>`;
+        }
+        const deleteBtn = window.isEditMode 
+          ? `<button class="delete-event-btn" onclick="deleteEvent('${e.id}', event)">🗑️</button>` 
           : '';
 
         return `<div class="event-card">
           ${deleteBtn}
-          <div class="event-date">${event.date}</div>
-          <div class="event-title">${event.title}</div>
-          ${tagsHtml}
-          <div class="event-desc">${event.desc || ''}</div>
+          <div class="event-date">${e.date}</div>
+          <div class="event-title">${e.title}</div>
+          <div class="event-desc">${e.desc || ''}</div>
           ${financeHtml}${mediaHtml}
         </div>`;
       }).join('');
-      updateStatus();
     }
 
-    // === РЕЖИМЫ ПРОСМОТР / РЕДАКТИРОВАНИЕ ===
+    // === ACTIONS ===
+    function handleFabClick() {
+      if (!window.isEditMode) return;
+      if (window.currentProjectId) {
+        openModal('eventModal');
+        document.getElementById('eventDate').value = new Date().toISOString().slice(0, 16);
+        setFinanceType('income');
+      } else {
+        openModal('projectModal');
+      }
+    }
+
+    document.getElementById('projectForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newProject = {
+        id: Date.now().toString(),
+        title: document.getElementById('projTitle').value,
+        category: document.getElementById('projCategory').value,
+        subcategory: document.getElementById('projSubcategory').value,
+        summary: document.getElementById('projSummary').value,
+        events: []
+      };
+      projects.push(newProject);
+      saveProjects();
+      closeModal('projectModal');
+      document.getElementById('projectForm').reset();
+      renderMain();
+    });
+
+    document.getElementById('eventForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const project = projects.find(p => p.id === window.currentProjectId);
+      if (!project) return;
+
+      const dateVal = document.getElementById('eventDate').value;
+      const finType = document.getElementById('financeType').value;
+      let finVal = document.getElementById('financeInput').value;
+
+      if (finType === 'expense' && finVal) finVal = '-' + Math.abs(parseFloat(finVal));
+      else if (finType === 'income' && finVal) finVal = '+' + Math.abs(parseFloat(finVal));
+      else if (finType === 'skip') finVal = '';
+
+      const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+      const d = new Date(dateVal);
+      const dateStr = `${d.getDate()} ${months[d.getMonth()]} • ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+
+      const newEvent = {
+        id: Date.now().toString(),
+        date: dateStr,
+        title: document.getElementById('eventTitle').value,
+        desc: document.getElementById('eventDesc').value,
+        finance: finVal,
+        sortDate: d.getTime(),
+        media: window.tempMedia || []
+      };
+
+      project.events.push(newEvent);
+      saveProjects();
+      closeModal('eventModal');
+      document.getElementById('eventForm').reset();
+      document.getElementById('mediaPreview').innerHTML = '';
+      window.tempMedia = [];
+      renderTimeline(project);
+    });
+
+    function deleteProject(id, event) {
+      event.stopPropagation();
+      if (!confirm('Удалить проект и все его события?')) return;
+      projects = projects.filter(p => p.id !== id);
+      saveProjects();
+      renderMain();
+    }
+
+    function deleteEvent(eventId, event) {
+      event.stopPropagation();
+      if (!confirm('Удалить это событие?')) return;
+      const project = projects.find(p => p.id === window.currentProjectId);
+      project.events = project.events.filter(e => e.id !== eventId);
+      saveProjects();
+      renderTimeline(project);
+    }
+
+    // === UI HELPERS ===
     function toggleEditMode() {
       window.isEditMode = !window.isEditMode;
       localStorage.setItem('sz_app_mode', window.isEditMode ? 'edit' : 'view');
@@ -510,117 +503,61 @@
       const btn = document.getElementById('modeToggle');
       const fab = document.getElementById('fabBtn');
       if (window.isEditMode) {
-        btn.textContent = '✏️ Ред.';
-        btn.classList.remove('view-mode');
-        fab.classList.remove('hidden');
+        btn.textContent = '✏️ Ред.'; btn.classList.remove('view-mode'); fab.classList.remove('hidden');
       } else {
-        btn.textContent = '🔒 Просм.';
-        btn.classList.add('view-mode');
-        fab.classList.add('hidden');
+        btn.textContent = '🔒 Просм.'; btn.classList.add('view-mode'); fab.classList.add('hidden');
       }
-      renderEvents(); // Перерисовка для появления/скрытия кнопок удаления
+      if (window.currentProjectId) {
+        const p = projects.find(pr => pr.id === window.currentProjectId);
+        if(p) renderTimeline(p);
+      } else {
+        renderMain();
+      }
     }
 
-    // Модальные окна
-    function openModal() {
-      if (!window.isEditMode) return;
-      document.getElementById('modal').classList.add('active');
-      document.getElementById('dateInput').value = new Date().toISOString().slice(0, 16);
-      setFinanceType('income');
-      updateSubcategories();
-    }
-    function closeModal() {
-      document.getElementById('modal').classList.remove('active');
-      document.getElementById('eventForm').reset();
-      document.getElementById('mediaPreview').innerHTML = '';
-      window.tempMedia = [];
-    }
-    function openSettings() { document.getElementById('settingsModal').classList.add('active'); }
-    function closeSettings() { document.getElementById('settingsModal').classList.remove('active'); }
-
-    function updateSubcategories() {
-      const category = document.getElementById('categoryInput').value;
-      const subcategories = categories[category] || ['Общее'];
-      const select = document.getElementById('subcategoryInput');
-      select.innerHTML = subcategories.map(sub => `<option value="${sub}">${sub}</option>`).join('');
-    }
-
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    
     function setFinanceType(type) {
       document.getElementById('financeType').value = type;
-      document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
       document.querySelector(`[data-type="${type}"]`).classList.add('active');
       const input = document.getElementById('financeInput');
-      input.classList.remove('income', 'expense', 'skip');
-      if (type === 'income') { input.classList.add('income'); input.placeholder = '18800'; input.disabled = false; }
-      else if (type === 'expense') { input.classList.add('expense'); input.placeholder = '3000'; input.disabled = false; }
-      else { input.classList.add('skip'); input.placeholder = 'Не указано'; input.disabled = true; input.value = ''; }
-      if (type !== 'skip') setTimeout(() => input.focus(), 100);
+      input.className = type;
+      if (type === 'skip') { input.disabled = true; input.value = ''; } 
+      else { input.disabled = false; }
     }
 
-    function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
     document.getElementById('mediaInput').addEventListener('change', async (e) => {
       const files = Array.from(e.target.files);
-      const mediaArray = [];
-      for (const file of files) mediaArray.push(await fileToBase64(file));
-      document.getElementById('mediaPreview').innerHTML = mediaArray.map(src => `<img src="${src}">`).join('');
-      window.tempMedia = mediaArray;
-    });
-
-    document.getElementById('eventForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const dateValue = document.getElementById('dateInput').value;
-      const financeType = document.getElementById('financeType').value;
-      let financeValue = document.getElementById('financeInput').value;
-
-      if (financeType === 'expense' && financeValue) financeValue = '-' + Math.abs(parseFloat(financeValue));
-      else if (financeType === 'income' && financeValue) financeValue = '+' + Math.abs(parseFloat(financeValue));
-      else if (financeType === 'skip') financeValue = '';
-
-      const event = {
-        date: formatDate(dateValue),
-        title: document.getElementById('titleInput').value,
-        desc: document.getElementById('descInput').value,
-        finance: financeValue,
-        sortDate: new Date(dateValue).getTime(),
-        media: window.tempMedia || [],
-        category: document.getElementById('categoryInput').value,
-        subcategory: document.getElementById('subcategoryInput').value
-      };
-      const events = loadEvents();
-      events.push(event);
-      saveEvents(events);
-      closeModal();
-      renderEvents();
+      const arr = [];
+      for (const f of files) {
+        arr.push(await new Promise(res => {
+          const r = new FileReader();
+          r.onload = () => res(r.result);
+          r.readAsDataURL(f);
+        }));
+      }
+      window.tempMedia = arr;
+      document.getElementById('mediaPreview').innerHTML = arr.map(s => `<img src="${s}">`).join('');
     });
 
     function viewImage(src) {
-      const overlay = document.createElement('div');
-      overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:300;cursor:pointer;padding:20px;';
-      const img = new Image();
-      img.src = src;
-      img.style.cssText = 'max-width:100%;max-height:100%;border-radius:12px;';
-      overlay.appendChild(img);
-      overlay.onclick = () => overlay.remove();
-      document.body.appendChild(overlay);
+      const o = document.createElement('div');
+      o.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:300;cursor:pointer;';
+      const i = new Image(); i.src = src; i.style.cssText = 'max-width:100%;max-height:100%;';
+      o.appendChild(i); o.onclick = () => o.remove();
+      document.body.appendChild(o);
     }
 
+    function openSettings() { openModal('settingsModal'); }
+    
     function exportData() {
-      const data = localStorage.getItem('sz_timeline_events') || '[]';
-      const blob = new Blob([data], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(projects, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = `sz_backup_${new Date().toISOString().slice(0,10)}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-      alert('✅ Бэкап скачан!');
+      a.href = url; a.download = `sz_projects_${new Date().toISOString().slice(0,10)}.json`;
+      a.click(); URL.revokeObjectURL(url);
     }
 
     function importData(event) {
@@ -631,40 +568,33 @@
         try {
           const data = JSON.parse(e.target.result);
           if (Array.isArray(data)) {
-            localStorage.setItem('sz_timeline_events', JSON.stringify(data));
-            renderEvents();
-            closeSettings();
-            alert('✅ Хронология успешно загружена!');
-          } else {
-            alert('❌ Неверный формат файла.');
-          }
-        } catch (err) {
-          alert('❌ Ошибка чтения файла.');
-        }
+            projects = data;
+            saveProjects();
+            closeModal('settingsModal');
+            renderMain();
+            alert('✅ Импорт успешен!');
+          } else { alert('❌ Неверный формат.'); }
+        } catch (err) { alert('❌ Ошибка файла.'); }
       };
       reader.readAsText(file);
     }
 
     function clearData() {
-      if (confirm('⚠️ Ты уверен? Все события будут удалены безвозвратно!')) {
-        localStorage.removeItem('sz_timeline_events');
-        renderEvents();
-        closeSettings();
+      if (confirm('⚠️ Удалить ВСЕ проекты и события?')) {
+        projects = [];
+        saveProjects();
+        closeModal('settingsModal');
+        renderMain();
       }
     }
 
-    document.querySelectorAll('.modal').forEach(modal => {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          modal.classList.remove('active');
-          if(modal.id === 'modal') { document.getElementById('eventForm').reset(); document.getElementById('mediaPreview').innerHTML = ''; window.tempMedia = []; }
-        }
-      });
+    document.querySelectorAll('.modal').forEach(m => {
+      m.addEventListener('click', (e) => { if (e.target === m) m.classList.remove('active'); });
     });
 
-    // Инициализация
+    // Init
     updateAppMode();
-    renderEvents();
+    renderMain();
   </script>
 </body>
 </html>
