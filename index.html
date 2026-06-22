@@ -147,8 +147,33 @@
       box-shadow: 0 0 12px rgba(167, 243, 208, 0.6);
     }
 
+    /* Кнопка удаления события */
+    .delete-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      color: #f87171;
+      padding: 0;
+    }
+
+    .delete-btn:hover {
+      background: rgba(248, 113, 113, 0.3);
+      transform: scale(1.1);
+    }
+
     .event-date { font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
-    .event-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #e2e8f0; }
+    .event-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #e2e8f0; padding-right: 40px; }
     .event-desc { font-size: 14px; color: #94a3b8; margin-bottom: 12px; line-height: 1.5; }
     
     .event-tags { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
@@ -425,6 +450,16 @@
       renderEvents();
     }
 
+    // Удаление события
+    function deleteEvent(sortDate) {
+      if (!confirm('️ Удалить это событие?')) return;
+      
+      const events = loadEvents();
+      const updatedEvents = events.filter(e => e.sortDate !== sortDate);
+      saveEvents(updatedEvents);
+      renderEvents();
+    }
+
     function renderEvents() {
       const events = getFilteredEvents();
       const timeline = document.getElementById('timeline');
@@ -446,7 +481,14 @@
           <span class="event-tag">${event.category}</span>
           <span class="event-tag">${event.subcategory}</span>
         </div>`;
+        
+        // Кнопка удаления (только в режиме редактирования)
+        const deleteBtn = window.isEditMode 
+          ? `<button class="delete-btn" onclick="deleteEvent(${event.sortDate})">🗑️</button>` 
+          : '';
+
         return `<div class="event-card">
+          ${deleteBtn}
           <div class="event-date">${event.date}</div>
           <div class="event-title">${event.title}</div>
           ${tagsHtml}
@@ -476,11 +518,12 @@
         btn.classList.add('view-mode');
         fab.classList.add('hidden');
       }
+      renderEvents(); // Перерисовка для появления/скрытия кнопок удаления
     }
 
     // Модальные окна
     function openModal() {
-      if (!window.isEditMode) return; // Блокировка открытия в режиме просмотра
+      if (!window.isEditMode) return;
       document.getElementById('modal').classList.add('active');
       document.getElementById('dateInput').value = new Date().toISOString().slice(0, 16);
       setFinanceType('income');
