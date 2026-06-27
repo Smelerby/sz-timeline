@@ -15,7 +15,6 @@
       padding-bottom: 100px;
     }
 
-    /* Шапка */
     .header {
       position: sticky; top: 0; background: rgba(15, 23, 42, 0.95);
       backdrop-filter: blur(10px); padding: 16px 20px; z-index: 100;
@@ -34,9 +33,8 @@
       color: #c4b5fd; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer;
     }
     .mode-toggle.view-mode { background: rgba(148, 163, 184, 0.2); border-color: #94a3b8; color: #94a3b8; }
-    .settings-btn { background: none; border: none; font-size: 20px; cursor: pointer; opacity: 0.7; }
+    .settings-btn { background: none; border: none; font-size: 24px; cursor: pointer; opacity: 0.7; }
 
-    /* Фильтры */
     .filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
     .filters::-webkit-scrollbar { display: none; }
     .filter-btn {
@@ -45,7 +43,6 @@
     }
     .filter-btn.active { background: linear-gradient(135deg, #a7f3d0 0%, #10b981 100%); border-color: #10b981; color: #0f172a; font-weight: 600; }
 
-    /* Сетка проектов (Главный экран) */
     .projects-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 16px; padding: 20px;
@@ -63,13 +60,19 @@
     .project-finance.income { color: #10b981; }
     .project-finance.expense { color: #f87171; }
     
-    .delete-proj-btn {
-      position: absolute; top: 8px; right: 8px; background: rgba(248, 113, 113, 0.1);
-      border: 1px solid rgba(248, 113, 113, 0.3); border-radius: 6px; width: 24px; height: 24px;
-      display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; color: #f87171;
+    .card-actions {
+      position: absolute; top: 8px; right: 8px; display: flex; gap: 6px;
     }
+    .action-btn {
+      background: rgba(167, 243, 208, 0.1); border: 1px solid rgba(167, 243, 208, 0.3);
+      border-radius: 6px; width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 12px; transition: all 0.3s ease;
+    }
+    .action-btn.delete { background: rgba(248, 113, 113, 0.1); border-color: rgba(248, 113, 113, 0.3); color: #f87171; }
+    .action-btn.edit { color: #a7f3d0; }
+    .action-btn:hover { transform: scale(1.1); }
 
-    /* Лента времени (Экран проекта) */
     .timeline-view { display: none; padding: 20px; }
     .back-btn {
       background: none; border: none; color: #a7f3d0; font-size: 16px; font-weight: 600;
@@ -89,21 +92,14 @@
       background: #a7f3d0; border-radius: 50%; box-shadow: 0 0 12px rgba(167, 243, 208, 0.6);
     }
     .event-date { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
-    .event-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #e2e8f0; padding-right: 30px; }
+    .event-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #e2e8f0; padding-right: 70px; }
     .event-desc { font-size: 14px; color: #94a3b8; margin-bottom: 8px; line-height: 1.4; }
     .event-finance { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: 600; }
     .event-finance.income { background: rgba(16, 185, 129, 0.2); color: #10b981; }
     .event-finance.expense { background: rgba(248, 113, 113, 0.2); color: #f87171; }
     .event-media { display: flex; gap: 8px; margin-top: 8px; overflow-x: auto; }
     .event-media img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(167, 243, 208, 0.3); }
-    
-    .delete-event-btn {
-      position: absolute; top: 12px; right: 12px; background: rgba(248, 113, 113, 0.1);
-      border: 1px solid rgba(248, 113, 113, 0.3); border-radius: 6px; width: 24px; height: 24px;
-      display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; color: #f87171;
-    }
 
-    /* FAB */
     .fab {
       position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
       background: linear-gradient(135deg, #a7f3d0 0%, #10b981 100%); border-radius: 50%;
@@ -112,7 +108,6 @@
     }
     .fab.hidden { opacity: 0; pointer-events: none; transform: scale(0.5); }
 
-    /* Модальные окна */
     .modal {
       display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0, 0, 0, 0.7); z-index: 200; align-items: flex-end; justify-content: center;
@@ -165,14 +160,13 @@
 </head>
 <body>
 
-  <!-- ГЛАВНЫЙ ЭКРАН: СПИСОК ПРОЕКТОВ -->
   <div id="main-view">
     <div class="header">
       <div class="header-top">
         <h1>🌿 СЖ: Проекты</h1>
         <div class="header-actions">
           <button class="mode-toggle" id="modeToggle" onclick="toggleEditMode()">✏️ Ред.</button>
-          <button class="settings-btn" onclick="openSettings()" style="font-size: 24px;">⚙️</button>
+          <button class="settings-btn" onclick="openSettings()">⚙️</button>
         </div>
       </div>
       <div class="filters">
@@ -186,7 +180,6 @@
     <div class="projects-grid" id="projectsGrid"></div>
   </div>
 
-  <!-- ЭКРАН ПРОЕКТА: ЛЕНТА СОБЫТИЙ -->
   <div id="project-view" class="timeline-view">
     <div class="header" style="position: relative; border-bottom: none; padding-bottom: 0;">
       <button class="back-btn" onclick="goBack()">← Назад к проектам</button>
@@ -195,17 +188,17 @@
     <div class="timeline" id="timeline"></div>
   </div>
 
-  <!-- FAB -->
   <button class="fab" id="fabBtn" onclick="handleFabClick()">+</button>
 
-  <!-- МОДАЛКА: НОВЫЙ ПРОЕКТ -->
+  <!-- Модалка проекта -->
   <div class="modal" id="projectModal">
     <div class="modal-content">
       <div class="modal-header">
-        <div class="modal-title">Новый проект</div>
+        <div class="modal-title" id="projectModalTitle">Новый проект</div>
         <button class="modal-close" onclick="closeModal('projectModal')">×</button>
       </div>
       <form id="projectForm">
+        <input type="hidden" id="projId">
         <div class="form-group">
           <label>Название</label>
           <input type="text" id="projTitle" placeholder="Например: Сабантуй" required>
@@ -213,10 +206,10 @@
         <div class="form-group">
           <label>Категория</label>
           <select id="projCategory" required>
-            <option value="Бизнес">📦 Бизнес</option>
+            <option value="Бизнес"> Бизнес</option>
             <option value="Проект СЖ">🚀 Проект СЖ</option>
             <option value="Личное">🏠 Личное</option>
-            <option value="Другое"> Другое</option>
+            <option value="Другое">📌 Другое</option>
           </select>
         </div>
         <div class="form-group">
@@ -224,22 +217,23 @@
           <input type="text" id="projSubcategory" placeholder="Например: Сезонки" required>
         </div>
         <div class="form-group">
-          <label>Краткое описание (необязательно)</label>
+          <label>Краткое описание</label>
           <textarea id="projSummary" placeholder="О чем этот проект?"></textarea>
         </div>
-        <button type="submit" class="btn-primary">Создать проект</button>
+        <button type="submit" class="btn-primary" id="projSubmitBtn">Создать проект</button>
       </form>
     </div>
   </div>
 
-  <!-- МОДАЛКА: НОВОЕ СОБЫТИЕ -->
+  <!-- Модалка события -->
   <div class="modal" id="eventModal">
     <div class="modal-content">
       <div class="modal-header">
-        <div class="modal-title">Новое событие</div>
+        <div class="modal-title" id="eventModalTitle">Новое событие</div>
         <button class="modal-close" onclick="closeModal('eventModal')">×</button>
       </div>
       <form id="eventForm">
+        <input type="hidden" id="eventId">
         <div class="form-group">
           <label>Дата и время</label>
           <input type="datetime-local" id="eventDate" required>
@@ -271,16 +265,15 @@
           <button type="button" onclick="document.getElementById('mediaInput').click()" class="btn-secondary">Выбрать фото</button>
           <div id="mediaPreview" class="media-preview"></div>
         </div>
-        <button type="submit" class="btn-primary">Сохранить событие</button>
+        <button type="submit" class="btn-primary" id="eventSubmitBtn">Сохранить событие</button>
       </form>
     </div>
   </div>
 
-  <!-- МОДАЛКА: НАСТРОЙКИ -->
   <div class="modal" id="settingsModal">
     <div class="modal-content">
       <div class="modal-header">
-        <div class="modal-title">️ Настройки</div>
+        <div class="modal-title">⚙️ Настройки</div>
         <button class="modal-close" onclick="closeModal('settingsModal')">×</button>
       </div>
       <div class="form-group">
@@ -294,24 +287,21 @@
         <button onclick="exportData()" class="btn-secondary">📥 Скачать бэкап</button>
       </div>
       <div class="form-group" style="margin-top: 30px;">
-        <button onclick="clearData()" class="btn-danger">🗑️ Очистить все данные</button>
+        <button onclick="clearData()" class="btn-danger">️ Очистить все данные</button>
       </div>
     </div>
   </div>
 
   <script>
-    // === STATE ===
     window.tempMedia = [];
     window.currentFilter = 'all';
     window.currentProjectId = null;
     window.isEditMode = localStorage.getItem('sz_app_mode') !== 'view';
     
-    // Новая структура данных
     let projects = JSON.parse(localStorage.getItem('sz_projects_v2') || '[]');
-
     const saveProjects = () => localStorage.setItem('sz_projects_v2', JSON.stringify(projects));
 
-    // === MAIN VIEW LOGIC ===
+    // === РЕНДЕР ГЛАВНОГО ЭКРАНА ===
     function renderMain() {
       const grid = document.getElementById('projectsGrid');
       let filtered = window.currentFilter === 'all' ? projects : projects.filter(p => p.category === window.currentFilter);
@@ -327,12 +317,15 @@
           ? `<div class="project-finance ${finance > 0 ? 'income' : 'expense'}">${finance > 0 ? '+' : ''}${finance.toLocaleString('ru-RU')} ₽</div>` 
           : '';
         
-        const deleteBtn = window.isEditMode 
-          ? `<button class="delete-proj-btn" onclick="deleteProject('${p.id}', event)">🗑️</button>` 
+        const actionsHtml = window.isEditMode 
+          ? `<div class="card-actions">
+               <button class="action-btn edit" onclick="editProject('${p.id}', event)">✏️</button>
+               <button class="action-btn delete" onclick="deleteProject('${p.id}', event)">🗑️</button>
+             </div>` 
           : '';
 
         return `<div class="project-card" onclick="openProject('${p.id}')">
-          ${deleteBtn}
+          ${actionsHtml}
           <div>
             <div class="project-title">${p.title}</div>
             <div class="project-meta">${p.subcategory} • ${p.events.length} соб.</div>
@@ -360,7 +353,7 @@
       renderMain();
     }
 
-    // === PROJECT VIEW LOGIC ===
+    // === ЭКРАН ПРОЕКТА ===
     function openProject(id) {
       window.currentProjectId = id;
       const project = projects.find(p => p.id === id);
@@ -382,7 +375,7 @@
     function renderTimeline(project) {
       const timeline = document.getElementById('timeline');
       if (project.events.length === 0) {
-        timeline.innerHTML = `<div class="empty-state"><div style="font-size: 48px; margin-bottom: 16px;">⏳</div><div>Пока нет событий</div></div>`;
+        timeline.innerHTML = `<div class="empty-state"><div style="font-size: 48px; margin-bottom: 16px;"></div><div>Пока нет событий</div></div>`;
         return;
       }
 
@@ -396,12 +389,15 @@
           const cls = e.finance.startsWith('-') ? 'expense' : 'income';
           financeHtml = `<div class="event-finance ${cls}">${e.finance} ₽</div>`;
         }
-        const deleteBtn = window.isEditMode 
-          ? `<button class="delete-event-btn" onclick="deleteEvent('${e.id}', event)">🗑️</button>` 
+        const actionsHtml = window.isEditMode 
+          ? `<div class="card-actions">
+               <button class="action-btn edit" onclick="editEvent('${e.id}', event)">✏️</button>
+               <button class="action-btn delete" onclick="deleteEvent('${e.id}', event)">🗑️</button>
+             </div>` 
           : '';
 
         return `<div class="event-card">
-          ${deleteBtn}
+          ${actionsHtml}
           <div class="event-date">${e.date}</div>
           <div class="event-title">${e.title}</div>
           <div class="event-desc">${e.desc || ''}</div>
@@ -410,40 +406,130 @@
       }).join('');
     }
 
-    // === ACTIONS ===
+    // === ДЕЙСТВИЯ ===
     function handleFabClick() {
       if (!window.isEditMode) return;
       if (window.currentProjectId) {
-        openModal('eventModal');
-        document.getElementById('eventDate').value = new Date().toISOString().slice(0, 16);
-        setFinanceType('income');
+        openEventModal();
       } else {
-        openModal('projectModal');
+        openProjectModal();
       }
+    }
+
+    // --- Проект: создание/редактирование ---
+    function openProjectModal(project = null) {
+      document.getElementById('projectModalTitle').textContent = project ? 'Редактировать проект' : 'Новый проект';
+      document.getElementById('projSubmitBtn').textContent = project ? 'Сохранить изменения' : 'Создать проект';
+      document.getElementById('projId').value = project ? project.id : '';
+      document.getElementById('projTitle').value = project ? project.title : '';
+      document.getElementById('projCategory').value = project ? project.category : 'Бизнес';
+      document.getElementById('projSubcategory').value = project ? project.subcategory : '';
+      document.getElementById('projSummary').value = project ? (project.summary || '') : '';
+      openModal('projectModal');
+    }
+
+    function editProject(id, event) {
+      event.stopPropagation();
+      const project = projects.find(p => p.id === id);
+      if (project) openProjectModal(project);
     }
 
     document.getElementById('projectForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      const newProject = {
-        id: Date.now().toString(),
-        title: document.getElementById('projTitle').value,
-        category: document.getElementById('projCategory').value,
-        subcategory: document.getElementById('projSubcategory').value,
-        summary: document.getElementById('projSummary').value,
-        events: []
-      };
-      projects.push(newProject);
+      const id = document.getElementById('projId').value;
+      
+      if (id) {
+        // Редактирование
+        const project = projects.find(p => p.id === id);
+        if (project) {
+          project.title = document.getElementById('projTitle').value;
+          project.category = document.getElementById('projCategory').value;
+          project.subcategory = document.getElementById('projSubcategory').value;
+          project.summary = document.getElementById('projSummary').value;
+        }
+      } else {
+        // Создание
+        const newProject = {
+          id: Date.now().toString(),
+          title: document.getElementById('projTitle').value,
+          category: document.getElementById('projCategory').value,
+          subcategory: document.getElementById('projSubcategory').value,
+          summary: document.getElementById('projSummary').value,
+          events: []
+        };
+        projects.push(newProject);
+      }
+      
       saveProjects();
       closeModal('projectModal');
       document.getElementById('projectForm').reset();
       renderMain();
     });
 
+    function deleteProject(id, event) {
+      event.stopPropagation();
+      if (!confirm('Удалить проект и все его события?')) return;
+      projects = projects.filter(p => p.id !== id);
+      saveProjects();
+      renderMain();
+    }
+
+    // --- Событие: создание/редактирование ---
+    function openEventModal(eventData = null) {
+      document.getElementById('eventModalTitle').textContent = eventData ? 'Редактировать событие' : 'Новое событие';
+      document.getElementById('eventSubmitBtn').textContent = eventData ? 'Сохранить изменения' : 'Сохранить событие';
+      document.getElementById('eventId').value = eventData ? eventData.id : '';
+      
+      if (eventData) {
+        // Парсим дату обратно в формат datetime-local
+        const dateStr = eventData.date; // "12 июня • 08:00"
+        // Для редактирования просто подставим текущую дату, если парсинг сложный
+        document.getElementById('eventDate').value = new Date(eventData.sortDate).toISOString().slice(0, 16);
+        document.getElementById('eventTitle').value = eventData.title;
+        document.getElementById('eventDesc').value = eventData.desc || '';
+        
+        // Финансы
+        if (eventData.finance) {
+          if (eventData.finance.startsWith('-')) {
+            setFinanceType('expense');
+            document.getElementById('financeInput').value = Math.abs(parseFloat(eventData.finance));
+          } else {
+            setFinanceType('income');
+            document.getElementById('financeInput').value = eventData.finance.replace('+', '');
+          }
+        } else {
+          setFinanceType('skip');
+        }
+        
+        // Медиа
+        window.tempMedia = eventData.media || [];
+        document.getElementById('mediaPreview').innerHTML = window.tempMedia.map(s => `<img src="${s}">`).join('');
+      } else {
+        document.getElementById('eventDate').value = new Date().toISOString().slice(0, 16);
+        document.getElementById('eventTitle').value = '';
+        document.getElementById('eventDesc').value = '';
+        document.getElementById('financeInput').value = '';
+        setFinanceType('income');
+        window.tempMedia = [];
+        document.getElementById('mediaPreview').innerHTML = '';
+      }
+      
+      openModal('eventModal');
+    }
+
+    function editEvent(eventId, event) {
+      event.stopPropagation();
+      const project = projects.find(p => p.id === window.currentProjectId);
+      const eventData = project.events.find(e => e.id === eventId);
+      if (eventData) openEventModal(eventData);
+    }
+
     document.getElementById('eventForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const project = projects.find(p => p.id === window.currentProjectId);
       if (!project) return;
 
+      const id = document.getElementById('eventId').value;
       const dateVal = document.getElementById('eventDate').value;
       const finType = document.getElementById('financeType').value;
       let finVal = document.getElementById('financeInput').value;
@@ -456,8 +542,8 @@
       const d = new Date(dateVal);
       const dateStr = `${d.getDate()} ${months[d.getMonth()]} • ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 
-      const newEvent = {
-        id: Date.now().toString(),
+      const eventData = {
+        id: id || Date.now().toString(),
         date: dateStr,
         title: document.getElementById('eventTitle').value,
         desc: document.getElementById('eventDesc').value,
@@ -466,7 +552,15 @@
         media: window.tempMedia || []
       };
 
-      project.events.push(newEvent);
+      if (id) {
+        // Редактирование
+        const idx = project.events.findIndex(e => e.id === id);
+        if (idx !== -1) project.events[idx] = eventData;
+      } else {
+        // Создание
+        project.events.push(eventData);
+      }
+
       saveProjects();
       closeModal('eventModal');
       document.getElementById('eventForm').reset();
@@ -474,14 +568,6 @@
       window.tempMedia = [];
       renderTimeline(project);
     });
-
-    function deleteProject(id, event) {
-      event.stopPropagation();
-      if (!confirm('Удалить проект и все его события?')) return;
-      projects = projects.filter(p => p.id !== id);
-      saveProjects();
-      renderMain();
-    }
 
     function deleteEvent(eventId, event) {
       event.stopPropagation();
@@ -580,7 +666,7 @@
     }
 
     function clearData() {
-      if (confirm('⚠️ Удалить ВСЕ проекты и события?')) {
+      if (confirm('️ Удалить ВСЕ проекты и события?')) {
         projects = [];
         saveProjects();
         closeModal('settingsModal');
@@ -592,7 +678,6 @@
       m.addEventListener('click', (e) => { if (e.target === m) m.classList.remove('active'); });
     });
 
-    // Init
     updateAppMode();
     renderMain();
   </script>
